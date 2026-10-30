@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Clipo Words</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Cairo:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: full-screen vertical word cards, one word per screen, animated in three beats (word, Arabic meaning, example). */
+:root{
+  --bg:#0b0a10; --ink:#f5f3fa; --dim:#b4afc4; --accent:#7cf5d0; --like:#ff4d6d;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --arabic:"Cairo","Segoe UI",Tahoma,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 var(--body);overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.app{position:relative;height:100%;max-width:480px;margin:0 auto;overflow:hidden;border-inline:1px solid #2b2837}
+.gut{padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+.top{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding-top:max(14px,env(safe-area-inset-top,0px));padding-bottom:8px}
+.logo{font:800 22px var(--display);letter-spacing:-.02em}
+.logo i{font-style:normal;color:var(--accent)}
+.count{font-size:13px;font-weight:700;color:var(--dim);background:rgba(20,18,28,.55);padding:6px 12px;border-radius:999px;font-variant-numeric:tabular-nums}
+.feed{position:absolute;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none}
+.feed::-webkit-scrollbar{display:none}
+.card{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;display:grid;align-content:center;background:var(--bg)}
+.bg{position:absolute;inset:0;background:
+  radial-gradient(110% 70% at 15% 8%,hsl(var(--h) 75% 30%),transparent 62%),
+  radial-gradient(100% 70% at 92% 92%,hsl(calc(var(--h) + 55) 70% 24%),transparent 62%),var(--bg)}
+.bg::before,.bg::after{content:"";position:absolute;border-radius:50%;filter:blur(40px);opacity:.5;animation:drift 14s ease-in-out infinite alternate}
+.bg::before{width:55%;aspect-ratio:1;left:-10%;top:30%;background:hsl(var(--h) 80% 45%)}
+.bg::after{width:45%;aspect-ratio:1;right:-8%;top:10%;background:hsl(calc(var(--h) + 60) 80% 45%);animation-delay:-6s}
+@keyframes drift{to{transform:translate(18%,-12%) scale(1.2)}}
+.inner{position:relative;z-index:2;display:flex;flex-direction:column;gap:14px;padding-right:84px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.w{margin:0;font:800 clamp(40px,14vw,64px)/1.02 var(--display);letter-spacing:-.03em;overflow-wrap:anywhere;text-wrap:balance}
+.ar{margin:0;font:700 clamp(26px,8vw,34px)/1.4 var(--arabic);color:#fff}
+.ex{margin:0;font-size:18px;color:var(--dim);max-width:30ch}
+.ex b{color:var(--ink);font-weight:700;border-bottom:2px solid var(--accent)}
+.w,.ar,.ex,.tag{opacity:0;transform:translateY(18px)}
+.on .tag{animation:in .5s forwards}
+.on .w{animation:in .6s .1s forwards}
+.on .ar{animation:in .6s 1s forwards}
+.on .ex{animation:in .6s 1.9s forwards}
+@keyframes in{to{opacity:1;transform:none}}
+.rail{position:absolute;right:0;bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:3;display:flex;flex-direction:column;align-items:center;gap:20px;padding-right:max(12px,env(safe-area-inset-right,0px))}
+.rb{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:52px;min-height:52px;justify-content:center;font-size:12px;font-weight:700}
+.rb svg{width:34px;height:34px}
+.rb[aria-pressed="true"] svg{color:var(--like)}
+.listen{background:var(--accent);color:#06231b;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.listen svg{width:30px;height:30px}
+.hint{position:absolute;left:0;right:0;bottom:max(18px,env(safe-area-inset-bottom,0px));text-align:center;font-size:13px;color:var(--dim);z-index:3;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.msg{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:24px;color:var(--dim)}
+.toast{position:absolute;left:50%;top:70px;transform:translateX(-50%);z-index:30;background:var(--ink);color:#0b0a10;font-weight:700;font-size:13px;padding:9px 16px;border-radius:999px;max-width:90%;text-align:center}
+@media (prefers-reduced-motion:reduce){.w,.ar,.ex,.tag{opacity:1;transform:none;animation:none!important}.bg::before,.bg::after,.hint{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 4.5 6.4 4.5c2.1 0 3.9 1.1 5.6 3.3 1.7-2.2 3.5-3.3 5.6-3.3 3.7 0 5.5 3.9 4 7.3C19.5 16.4 12 21 12 21z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path fill="currentColor" d="M14 3l8 8-8 8v-5c-6 0-9.5 1.700-12 5 .8-6.300 4.400-10 12-11V3z"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 9c1.500 1.500 1.500 4.500 0 6M18.500 6.500c3 3 3 8 0 11"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="top gut"><div class="logo">clip<i>o</i> words</div><div class="count" id="count">0 / 0</div></header>
+  <main class="feed" id="feed"></main>
+  <div class="toast" id="toast" hidden role="status"></div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const FALLBACK='persevere | يثابر | She persevered despite the difficulties.\nreluctant | متردد، غير راغب | He was reluctant to speak in class.\nambitious | طموح | She is an ambitious student.\ncurious | فضولي | Children are naturally curious.\nachieve | يحقق | You can achieve your goals with hard work.';
+let likes=[];
+try{likes=JSON.parse(localStorage.getItem('clipo-words-likes')||'[]')}catch(e){}
+const saveLikes=()=>{try{localStorage.setItem('clipo-words-likes',JSON.stringify(likes))}catch(e){}};
+function parse(t){
+  return t.split(/\r?\n/).map(l=>l.trim()).filter(l=>l&&l[0]!=='#')
+   .map(l=>l.split('|').map(x=>x.trim())).filter(p=>p.length>=2&&p[0]&&p[1])
+   .map(p=>({w:p[0],ar:p[1],ex:p[2]||''}));
+}
+async function load(){
+  let t='';
+  try{const r=await fetch('words.txt?'+Date.now());if(r.ok)t=await r.text()}catch(e){}
+  let list=parse(t);
+  if(!list.length)list=parse(FALLBACK);
+  return list;
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>{t.hidden=true},2200)}
+function speak(w,ex){
+  if(!('speechSynthesis' in window)){toast('Sound is not available on this phone');return}
+  speechSynthesis.cancel();
+  const a=new SpeechSynthesisUtterance(w);a.lang='en-US';a.rate=.85;speechSynthesis.speak(a);
+  if(ex){const b=new SpeechSynthesisUtterance(ex);b.lang='en-US';b.rate=.9;speechSynthesis.speak(b)}
+}
+function hiliteExample(ex,w){
+  const safe=esc(ex);
+  const stem=w.length>4?w.slice(0,Math.max(4,w.length-2)):w;
+  const re=new RegExp('('+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\w*)','i');
+  return safe.replace(re,'<b>$1</b>');
+}
+function cardHTML(it,i,n){
+  const liked=likes.includes(it.w.toLowerCase());
+  return '<section class="card gut" style="--h:'+((i*47+150)%360)+'" data-i="'+i+'">'+
+   '<div class="bg"></div>'+
+   '<div class="inner"><span class="tag">Word '+(i+1)+' of '+n+'</span>'+
+   '<h2 class="w" lang="en" dir="ltr">'+esc(it.w)+'</h2>'+
+   '<p class="ar" lang="ar" dir="rtl">'+esc(it.ar)+'</p>'+
+   (it.ex?'<p class="ex" lang="en" dir="ltr">'+hiliteExample(it.ex,it.w)+'</p>':'')+'</div>'+
+   '<div class="rail">'+
+   '<button class="listen" data-act="listen" aria-label="Listen to the word"><svg><use href="#i-vol"/></svg></button>'+
+   '<button class="rb" data-act="like" aria-pressed="'+liked+'" aria-label="Save this word"><svg><use href="#i-heart"/></svg><span>Save</span></button>'+
+   '<button class="rb" data-act="share" aria-label="Share"><svg><use href="#i-share"/></svg><span>Share</span></button></div>'+
+   (i===0?'<div class="hint">Swipe up for the next word</div>':'')+'</section>';
+}
+(async function init(){
+  const items=await load(),feed=$('#feed');
+  if(!items.length){feed.innerHTML='<div class="msg">No words yet. Add lines to words.txt.</div>';return}
+  feed.innerHTML=items.map((it,i)=>cardHTML(it,i,items.length)).join('');
+  $('#count').textContent='1 / '+items.length;
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting&&e.intersectionRatio>=.6){
+        e.target.classList.add('on');
+        $('#count').textContent=(+e.target.dataset.i+1)+' / '+items.length;
+        const h=e.target.querySelector('.hint');if(h&&+e.target.dataset.i>0)h.remove();
+      }
+    });
+  },{root:feed,threshold:[.6]});
+  feed.querySelectorAll('.card').forEach(c=>obs.observe(c));
+  feed.addEventListener('click',e=>{
+    const b=e.target.closest('[data-act]');if(!b)return;
+    const card=b.closest('.card'),it=items[+card.dataset.i],a=b.dataset.act;
+    if(a==='listen')speak(it.w,it.ex);
+    else if(a==='like'){
+      const k=it.w.toLowerCase(),i=likes.indexOf(k);
+      i>=0?likes.splice(i,1):likes.push(k);saveLikes();
+      b.setAttribute('aria-pressed',String(i<0));
+      toast(i<0?'Saved':'Removed');
+    }else if(a==='share'){
+      const text=it.w+' = '+it.ar+' - '+location.href;
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(()=>toast('Copied. Paste it in a chat.')).catch(()=>toast('Copy is not available here'));
+      else toast('Copy is not available here');
+    }
+  });
+})();
+})();
+</script>
+</body>
+</html>

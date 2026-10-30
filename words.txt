@@ -1,0 +1,32 @@
+# كل سطر = كلمة | المعنى بالعربي | جملة مثال
+# السطور اللي بتبدأ بعلامة # بيتجاهلها التطبيق
+persevere | يثابر | She persevered despite the difficulties.
+reluctant | متردد، غير راغب | He was reluctant to speak in class.
+ambitious | طموح | She is an ambitious student.
+curious | فضولي | Children are naturally curious.
+achieve | يحقق | You can achieve your goals with hard work.
+improve | يحسّن | I want to improve my English.
+confident | واثق من نفسه | Be confident when you speak.
+determined | مصمم | He is determined to pass the exam.
+essential | أساسي | Sleep is essential for good health.
+benefit | فائدة | Reading has many benefits.
+challenge | تحدٍّ | Learning a language is a challenge.
+opportunity | فرصة | This is a great opportunity to learn.
+accurate | دقيق | Make sure your answer is accurate.
+fluent | متمكّن في اللغة | She is fluent in three languages.
+vocabulary | مفردات | Reading helps you build your vocabulary.
+pronounce | ينطق | How do you pronounce this word?
+summarize | يلخّص | Summarize the story in three sentences.
+compare | يقارن | Compare these two answers.
+focus | يركّز | Turn off your phone and focus.
+deadline | موعد نهائي | The deadline for the project is Friday.
+require | يتطلب | This job requires patience.
+recommend | ينصح بـ | I recommend this book.
+consider | يفكر في | Consider all the options first.
+attempt | محاولة | It was his first attempt.
+exhausted | مرهق جدًا | I was exhausted after the exam.
+delighted | سعيد جدًا | We are delighted to see you.
+ordinary | عادي | It was an ordinary day.
+rarely | نادرًا | He rarely arrives late.
+gradually | تدريجيًا | Her English improved gradually.
+eventually | في النهاية | Eventually, she passed the test.
